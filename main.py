@@ -7,7 +7,7 @@ app = FastAPI()
 class SlugRequest(BaseModel):
     title: str
 
-BACKEND_SECRET = os.getenv("BACKEND_SECRET")  # read from env var
+BACKEND_SECRET = os.getenv("BACKEND_SECRET")
 
 def slugify(text: str) -> str:
     text = text.lower()
@@ -17,9 +17,8 @@ def slugify(text: str) -> str:
 
 @app.middleware("http")
 async def verify_backend_secret(request: Request, call_next):
-    # Only check if BACKEND_SECRET is set
-    if BACKEND_SECRET:
-        header_secret = request.headers.get("X-Backend-Secret")
+    if BACKEND_SECRET:  # Only check if set
+        header_secret = request.headers.get("x-backend-secret")
         if header_secret != BACKEND_SECRET:
             raise HTTPException(status_code=401, detail="Unauthorized")
     return await call_next(request)
